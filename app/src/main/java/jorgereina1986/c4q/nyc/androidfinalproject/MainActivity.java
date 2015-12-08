@@ -3,7 +3,10 @@ package jorgereina1986.c4q.nyc.androidfinalproject;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -22,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
     ListView listView;
     EditText searchField;
+    String searchInput;
+    Button searchButton;
 
 
 
@@ -31,30 +36,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         listView = (ListView) findViewById(R.id.list_view);
-        searchField = (EditText) findViewById(R.id.search_input);
-        String searchInput;
-        searchInput = searchField.getText().toString();
+        searchField = (EditText) findViewById(R.id.search_field);
+        searchButton = (Button) findViewById(R.id.search_button);
 
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://itunes.apple.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        ItunesApi itunesApi = retrofit.create(ItunesApi.class);
-        Call<SearchResponse> call = itunesApi.search("music", searchInput);
-        call.enqueue(new Callback<SearchResponse>() {
+        searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Response<SearchResponse> response, Retrofit retrofit) {
-                Log.d(TAG, "response: " + response.body().getResultCount());
-                Log.d(TAG, "first: " + response.body().getResults().get(0).getArtistName());
-            }
+            public void onClick(View v) {
+                searchInput = searchField.getText().toString();
 
-            @Override
-            public void onFailure(Throwable t) {
-                Log.e(TAG, "error: " + t);
+
+
+                retrofitConnection();
+
+
+
+
+
+
+
             }
         });
+
 
 
 
@@ -69,6 +72,36 @@ public class MainActivity extends AppCompatActivity {
 
         listView.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, list));
 
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public void retrofitConnection(){
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://itunes.apple.com")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        ItunesApi itunesApi = retrofit.create(ItunesApi.class);
+        Call<SearchResponse> call = itunesApi.search("music", searchInput);
+        call.enqueue(new Callback<SearchResponse>() {
+            @Override
+            public void onResponse(Response<SearchResponse> response, Retrofit retrofit) {
+                Log.d(TAG, "response: " + response.body().getResultCount());
+                Log.d(TAG, "first: " + response.body().getResults().get(0).getTrackName());
+
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.e(TAG, "error: " + t);
+            }
+        });
 
     }
 }
