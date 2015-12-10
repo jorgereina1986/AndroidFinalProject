@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -27,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     EditText searchField;
     String searchInput;
     Button searchButton;
+    List<Result> resultList;
+    CustomAdapter adapter;
 
 
 
@@ -38,39 +39,18 @@ public class MainActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.list_view);
         searchField = (EditText) findViewById(R.id.search_field);
         searchButton = (Button) findViewById(R.id.search_button);
-
+        resultList = new ArrayList<>();
+        adapter = new CustomAdapter(this, resultList);
+        listView.setAdapter(adapter);
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 searchInput = searchField.getText().toString();
-
-
-
                 retrofitConnection();
-
-
-
-
-
-
-
             }
         });
 
-
-
-
-        List<String> list = new ArrayList<>();
-        list.add("hello");
-        list.add("world");
-        list.add("java");
-        list.add("face");
-        list.add("book");
-        list.add("brook");
-        list.add("crook");
-
-        listView.setAdapter(new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, list));
 
 
     }
@@ -95,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "response: " + response.body().getResultCount());
                 Log.d(TAG, "first: " + response.body().getResults().get(0).getTrackName());
 
+                List<Result> results = response.body().getResults();
+                load(results);
+
             }
 
             @Override
@@ -103,5 +86,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void load(List<Result> results) {
+        resultList.clear();
+        resultList.addAll(results);
+        adapter.notifyDataSetChanged();
     }
 }

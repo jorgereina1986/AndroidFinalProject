@@ -6,11 +6,11 @@ package jorgereina1986.c4q.nyc.androidfinalproject;
 public class Result {
     private String artistName;
     private String trackName;
-    private String artworkUrl60;
+    private String artworkUrl100;
 
 
-    public String getArtworkUrl60() {
-        return artworkUrl60;
+    public String getArtworkUrl100() {
+        return artworkUrl100;
     }
 
     public String getArtistName() {
